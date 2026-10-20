@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { AuthButton } from '@/features/auth/components/auth-button';
+import { ModeToggle } from '@/components/ui';
 import { Sparkles } from 'lucide-react';
 
 const Navbar = () => {
@@ -30,7 +31,8 @@ const Navbar = () => {
         </nav>
 
         {/* Right Auth Action */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <ModeToggle />
           <AuthButton />
         </div>
       </div>
