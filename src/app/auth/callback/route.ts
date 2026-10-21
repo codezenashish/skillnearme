@@ -6,8 +6,9 @@ import { eq } from 'drizzle-orm';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const roleParam = (searchParams.get('role') as 'teacher' | 'student') || 'student';
-  const next = searchParams.get('next');
+  const requestedRole = searchParams.get('role');
+  const roleParam: 'teacher' | 'student' =
+    requestedRole === 'teacher' ? 'teacher' : 'student';
 
   if (code) {
     const supabase = await createClient();
@@ -49,18 +50,18 @@ export async function GET(request: Request) {
           finalRole = existingUser.role as 'teacher' | 'student';
         }
 
-        // If explicit next redirect is passed, prefer it
-        if (next) {
-          return NextResponse.redirect(`${origin}${next}`);
-        }
-
-        // Otherwise redirect based on role
-        const redirectPath = finalRole === 'teacher' ? '/dashboard' : '/';
-        return NextResponse.redirect(`${origin}${redirectPath}`);
+        const redirectPath = `/dashboard?role=${encodeURIComponent(finalRole)}`;
+        return NextResponse.redirect(new URL(redirectPath, origin));
       } catch (dbError) {
         console.error('Failed to sync user with database:', dbError);
-        // Even if DB sync encounters an issue, the auth session is valid; redirect safely
-        return NextResponse.redirect(`${origin}/`);
+        // The auth session is valid, so keep the user in the requested dashboard
+        // even if database profile synchronization needs to be retried.
+        return NextResponse.redirect(
+          new URL(
+            `/dashboard?role=${encodeURIComponent(roleParam)}`,
+            origin,
+          ),
+        );
       }
     }
   }

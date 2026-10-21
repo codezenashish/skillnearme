@@ -23,33 +23,37 @@ export function StudentLeadsSection({
   leads = STUDENT_LEADS,
 }: StudentLeadsSectionProps) {
   return (
-    <section id="leads" className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-2xs scroll-mt-16">
+    <section
+      id="leads"
+      data-slot="card"
+      className="flex flex-col gap-6 rounded-xl border border-border bg-card py-6 text-card-foreground shadow-sm scroll-mt-16"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border/60 pb-3">
+      <div data-slot="card-header" className="flex items-center justify-between px-6 border-b border-border/60 pb-4">
         <div className="flex items-center gap-2.5">
-          <h2 className="subheading font-bold">
+          <h2 data-slot="card-title" className="text-base font-semibold leading-none tracking-tight">
             New Student Inquiries & Actionable Leads
           </h2>
-          <span className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 small-text font-bold text-primary animate-pulse">
+          <span className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary animate-pulse">
             <span className="size-1.5 rounded-full bg-primary" />
             3 Pending
           </span>
         </div>
         <Link
           href="#"
-          className="inline-flex items-center gap-1 small-text font-semibold text-primary hover:underline"
+          className="inline-flex items-center gap-1 small-text font-medium text-primary hover:underline"
         >
           <span>View All Leads</span>
           <ArrowRight className="size-3.5" />
         </Link>
       </div>
 
-      {/* Leads List */}
-      <div className="flex flex-col gap-4">
+      {/* Leads List Content */}
+      <div data-slot="card-content" className="flex flex-col gap-4 px-6">
         {leads.map((lead) => (
           <div
             key={lead.id}
-            className="flex flex-col gap-3 rounded-xl border border-border/70 bg-muted/40 p-4 transition-all hover:bg-muted/70 hover:border-primary/40"
+            className="flex flex-col gap-3 rounded-xl border border-border/70 p-4 transition-all hover:border-primary/40"
           >
             {/* Top row: Avatar, Name, Subject, Distance */}
             <div className="flex flex-wrap items-start justify-between gap-2">
@@ -62,10 +66,10 @@ export function StudentLeadsSection({
                 </Avatar>
                 <div className="flex flex-col min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="subheading font-bold">
+                    <span className="text-base font-semibold tracking-tight text-foreground">
                       {lead.studentName}
                     </span>
-                    <span className="rounded-md bg-primary/10 px-2 py-0.5 small-text font-semibold text-primary">
+                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                       {lead.subject}
                     </span>
                   </div>
@@ -77,9 +81,9 @@ export function StudentLeadsSection({
               </div>
 
               {/* Distance Pill */}
-              <div className="flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 small-text text-muted-foreground border border-border/60">
+              <div className="flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-xs text-muted-foreground border border-border/60">
                 <Compass className="size-3.5 text-primary" />
-                <span className="font-semibold text-foreground">
+                <span className="font-medium text-foreground">
                   {lead.distance}
                 </span>
                 <span>({lead.locality})</span>
@@ -91,22 +95,22 @@ export function StudentLeadsSection({
               <span className="flex items-center gap-1">
                 <Home className="size-3.5 text-primary" />
                 Prefers:{" "}
-                <strong className="font-semibold text-foreground">
+                <span className="font-medium text-foreground">
                   {lead.teachingPreference}
-                </strong>
+                </span>
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
                 <Calendar className="size-3.5 text-primary" />
                 Frequency:{" "}
-                <strong className="font-semibold text-foreground">
+                <span className="font-medium text-foreground">
                   {lead.frequency}
-                </strong>
+                </span>
               </span>
             </div>
 
             {/* Message Snippet Box */}
-            <div className="rounded-lg bg-card p-3 body-text text-foreground italic border border-border/50">
+            <div className="rounded-lg bg-card p-3 text-sm text-foreground/85 italic border border-border/50">
               “{lead.messageSnippet}”
             </div>
 
@@ -114,16 +118,16 @@ export function StudentLeadsSection({
             <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
               <div className="flex items-center gap-2">
                 <Button
-                  size="sm"
-                  className="gap-1.5 rounded-lg small-text font-semibold bg-primary text-primary-foreground shadow-2xs"
+                  size="default"
+                  className="h-9 px-3.5 gap-1.5 rounded-lg text-xs sm:text-sm font-medium bg-primary text-primary-foreground shadow-2xs hover:bg-primary/90"
                 >
                   <CheckCircle2 className="size-4" />
                   Accept & Send Trial Invite
                 </Button>
                 <Button
                   variant="outline"
-                  size="sm"
-                  className="gap-1.5 rounded-lg small-text font-medium border-border"
+                  size="default"
+                  className="h-9 px-3 gap-1.5 rounded-lg text-xs sm:text-sm font-medium border-border hover:bg-muted/60"
                 >
                   <MessageSquare className="size-3.5 text-primary" />
                   Chat
@@ -132,8 +136,8 @@ export function StudentLeadsSection({
 
               <Button
                 variant="ghost"
-                size="sm"
-                className="small-text text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                size="default"
+                className="h-9 px-3 rounded-lg text-xs sm:text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10"
               >
                 Decline
               </Button>

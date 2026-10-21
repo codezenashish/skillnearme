@@ -1,5 +1,6 @@
 import { NavBar } from "@/components/dashboard";
 
+
 export default function DashboardLayout({
   children,
 }: {

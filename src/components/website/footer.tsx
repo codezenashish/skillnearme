@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Sparkles, Heart } from 'lucide-react';
 
@@ -26,7 +28,7 @@ const Footer = () => {
             <Link href="/privacy" className="hover:text-blue-600 transition">
               Privacy
             </Link>
-            <span>&copy; {new Date().getFullYear()} SkillNearMe</span>
+            <span>&copy; 2025 SkillNearMe</span>
           </div>
         </div>
       </div>

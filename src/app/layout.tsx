@@ -1,4 +1,4 @@
-import { Inter, Geist_Mono } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import type { Metadata } from "next";
 
 import "./globals.css";
@@ -6,15 +6,9 @@ import { AgentationToolbar } from "@/components/agentation-toolbar";
 import { cn } from "@/lib/utils";
 import ThemeProvider from "@/components/providers/provider";
 
-const fontSans = Inter({
+const fontSans = Open_Sans({
   subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-open-sans",
   display: "swap",
 });
 
@@ -32,7 +26,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("font-sans", fontSans.variable, fontMono.variable)}
+      className={cn("font-sans", fontSans.variable)}
     >
       <body className="font-sans antialiased bg-background text-foreground">
         <ThemeProvider

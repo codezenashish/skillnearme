@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { createClient } from "@/libs/supabase/client";
 import {
   Search,
   Bell,
@@ -18,7 +20,9 @@ import {
   ModeToggle,
 } from "@/components/ui";
 
-interface NavBarProps {
+export interface NavBarProps {
+  /** User role ('student' or 'teacher'). Inferred from ?role= query param if omitted */
+  role?: "student" | "teacher";
   /** Student's selected location string */
   location?: string;
   /** Unread notification alerts count */
@@ -39,22 +43,51 @@ interface NavBarProps {
   onLocationClick?: () => void;
 }
 
-export const NavBar = ({
-  location = "Indiranagar, Bengaluru (Within 5 km)",
-  notificationCount = 2,
-  messageCount = 1,
+interface NavBarContentProps extends NavBarProps {
+  activeRole: "student" | "teacher";
+}
+
+function NavBarContent({
+  activeRole,
+  location = "Select your location",
+  notificationCount = 0,
+  messageCount = 0,
   user = {
-    name: "Aakash Sharma",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-    initials: "AS",
+    name: "Guest Student",
+    avatarUrl: undefined,
+    initials: "GS",
   },
   onSearch,
   onFindTutorsClick,
   onLocationClick,
-}: NavBarProps) => {
+}: NavBarContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [currentUser, setCurrentUser] = useState(user);
+
+  useEffect(() => {
+    if (user?.name && user.name !== "Guest Student") {
+      setCurrentUser(user);
+      return;
+    }
+
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        const name =
+          data.user.user_metadata?.full_name ||
+          data.user.user_metadata?.name ||
+          data.user.email?.split("@")[0] ||
+          "Student";
+        const avatarUrl = data.user.user_metadata?.avatar_url;
+        const initials = (name.split(" ").map((n: string) => n[0]).join("") || "ST")
+          .slice(0, 2)
+          .toUpperCase();
+
+        setCurrentUser({ name, avatarUrl, initials });
+      }
+    });
+  }, [user]);
 
   // Global search focus shortcut: ⌘K or /
   useEffect(() => {
@@ -198,12 +231,14 @@ export const NavBar = ({
           </Button>
 
           {/* "My Bookings" Student Navigation Link */}
-          <Link
-            href="/dashboard"
-            className="hidden sm:inline-block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap px-0.5 shrink-0"
-          >
-            My Bookings
-          </Link>
+          {activeRole !== "teacher" && (
+            <Link
+              href="/dashboard"
+              className="hidden sm:inline-block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap px-0.5 shrink-0"
+            >
+              My Bookings
+            </Link>
+          )}
 
           {/* Clean 1px Vertical Divider */}
           <div
@@ -242,7 +277,7 @@ export const NavBar = ({
           {/* Student Profile Avatar & Status */}
           <button
             type="button"
-            aria-label={`Student profile menu for ${user.name}`}
+            aria-label={`Student profile menu for ${currentUser.name}`}
             className="flex items-center gap-1.5 rounded-full p-0.5 hover:bg-muted transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
           >
             <div className="relative">
@@ -250,14 +285,14 @@ export const NavBar = ({
                 size="default"
                 className="size-8 rounded-full ring-1 ring-border"
               >
-                {user.avatarUrl && (
+                {currentUser.avatarUrl && (
                   <AvatarImage
-                    src={user.avatarUrl}
-                    alt={user.name ?? "Student"}
+                    src={currentUser.avatarUrl}
+                    alt={currentUser.name ?? "Student"}
                   />
                 )}
                 <AvatarFallback className="bg-muted text-xs font-semibold text-muted-foreground">
-                  {user.initials ?? "ST"}
+                  {currentUser.initials ?? "ST"}
                 </AvatarFallback>
               </Avatar>
 
@@ -275,6 +310,21 @@ export const NavBar = ({
         </div>
       </div>
     </header>
+  );
+}
+
+function NavBarWithRole(props: NavBarProps) {
+  const searchParams = useSearchParams();
+  const roleFromUrl = searchParams.get("role") === "teacher" ? "teacher" : "student";
+  const activeRole = props.role ?? roleFromUrl;
+  return <NavBarContent {...props} activeRole={activeRole} />;
+}
+
+export const NavBar = (props: NavBarProps) => {
+  return (
+    <Suspense fallback={<NavBarContent {...props} activeRole={props.role ?? "student"} />}>
+      <NavBarWithRole {...props} />
+    </Suspense>
   );
 };
 

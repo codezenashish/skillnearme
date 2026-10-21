@@ -20,35 +20,39 @@ export function TeacherScheduleFeed({
   slots = TODAY_TEACHING_SCHEDULE,
 }: TeacherScheduleFeedProps) {
   return (
-    <div id="schedule" className="rounded-2xl border border-border bg-card p-5 shadow-2xs scroll-mt-16">
+    <div
+      id="schedule"
+      data-slot="card"
+      className="flex flex-col gap-6 rounded-xl border border-border bg-card py-6 text-card-foreground shadow-sm scroll-mt-16"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border/60 pb-3">
+      <div data-slot="card-header" className="flex items-center justify-between px-6 border-b border-border/60 pb-4">
         <div className="flex items-center gap-2">
           <CalendarIcon className="size-5 text-primary" />
-          <h3 className="subheading font-bold">
+          <h3 data-slot="card-title" className="text-base font-semibold leading-none tracking-tight">
             Today's Schedule
           </h3>
         </div>
-        <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 small-text font-bold text-emerald-600 dark:text-emerald-400">
+        <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
           <Radio className="size-3 animate-pulse" />
           Live Ready
         </span>
       </div>
 
-      {/* Slots List */}
-      <div className="flex flex-col gap-3 pt-3">
+      {/* Slots List Content */}
+      <div data-slot="card-content" className="flex flex-col gap-3 px-6">
         {slots.map((slot) => (
           <div
             key={slot.id}
             className={`rounded-xl border p-3.5 transition-all ${
               slot.isLiveNow
-                ? "border-primary/50 bg-primary/5"
-                : "border-border/70 bg-muted/40 hover:border-border"
+                ? "border-primary/50"
+                : "border-border/70 hover:border-border"
             }`}
           >
-            <div className="flex items-center justify-between small-text">
+            <div className="flex items-center justify-between text-xs">
               <span
-                className={`flex items-center gap-1 rounded px-2 py-0.5 font-bold ${
+                className={`flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${
                   slot.isLiveNow
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-foreground"
@@ -57,12 +61,12 @@ export function TeacherScheduleFeed({
                 <Clock className="size-3" />
                 {slot.time}
               </span>
-              <span className="small-text font-medium">
+              <span className="text-muted-foreground font-normal">
                 {slot.duration}
               </span>
             </div>
 
-            <p className="mt-2 body-text font-bold text-foreground">
+            <p className="mt-2 text-sm font-semibold tracking-tight text-foreground">
               {slot.subject}
             </p>
             <p className="small-text mt-0.5">
@@ -80,11 +84,11 @@ export function TeacherScheduleFeed({
               </span>
 
               <Button
-                size="sm"
-                className={`small-text font-semibold rounded-md ${
+                size="default"
+                className={`h-8 px-3 rounded-lg text-xs font-medium ${
                   slot.isLiveNow
-                    ? "bg-primary text-primary-foreground shadow-2xs"
-                    : "border-border"
+                    ? "bg-primary text-primary-foreground shadow-2xs hover:bg-primary/90"
+                    : "border-border hover:bg-muted/60"
                 }`}
                 variant={slot.isLiveNow ? "default" : "outline"}
               >
